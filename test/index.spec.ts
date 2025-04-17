@@ -1,6 +1,6 @@
 // test/index.spec.ts
 import { SELF, fetchMock } from 'cloudflare:test';
-import { describe, it, expect, beforeAll } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 beforeAll(() => {
 	fetchMock.activate();
@@ -17,10 +17,10 @@ describe('GET /', () => {
 describe('GET /auth', () => {
 	it('responds with redirected location', async () => {
 		const response = await SELF.fetch('https://example.com/auth?provider=github');
-		expect(response.status).toBe(200);
-		expect(response.url).toEqual(
+		expect(response.status).toBe(301);
+		expect(response.headers.get('location')).toEqual(
 			expect.stringContaining(
-				'https://github.com/login/oauth/authorize?response_type=code&client_id=undefined&redirect_uri=https://example.com/callback?provider=github&scope=public_repo,user&state='
+				'https://github.com/login/oauth/authorize?response_type=code&client_id=undefined&redirect_uri=https://example.com/callback?provider=github&scope=repo,user&state='
 			)
 		);
 	});
